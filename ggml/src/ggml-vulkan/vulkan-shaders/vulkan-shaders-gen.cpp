@@ -917,6 +917,7 @@ void process_shaders() {
     string_to_spv("multi_add_rms_f32", "multi_add.comp", {{"A_TYPE", "float"}, {"B_TYPE", "float"}, {"D_TYPE", "float"}, {"FLOAT_TYPE", "float"}, {"RTE16", "1"}, {"ADD_RMS" , "1"}});
 
     string_to_spv("ssm_scan_f32", "ssm_scan.comp", {{"A_TYPE", "float"}});
+    string_to_spv("ssm_scan_f32_subgroup", "ssm_scan.comp", {{"A_TYPE", "float"}, {"USE_SUBGROUP_ADD", "1"}});
 
     string_to_spv("ssm_conv_f32", "ssm_conv.comp", {{"A_TYPE", "float"}});
 
@@ -1041,6 +1042,13 @@ void write_output_files() {
             src << "const uint64_t arr_dmmv_" << tname << "_" << btype << "_f32_len[3] =  {mul_mat_vec_" << tname << "_" << btype << "_f32_len,  mul_mat_vec_" << tname << "_" << btype << "_f32_subgroup_len, mul_mat_vec_"  << tname << "_" << btype << "_f32_subgroup_no_shmem_len};\n";
         }
     }
+    }
+
+    hdr << "extern const void * arr_ssm_scan_f32_data[2];\n";
+    hdr << "extern const uint64_t arr_ssm_scan_f32_len[2];\n";
+    if (basename(input_filepath) == "ssm_scan.comp") {
+        src << "const void * arr_ssm_scan_f32_data[2] = {ssm_scan_f32_data, ssm_scan_f32_subgroup_data};\n";
+        src << "const uint64_t arr_ssm_scan_f32_len[2] = {ssm_scan_f32_len, ssm_scan_f32_subgroup_len};\n";
     }
 
     if (input_filepath == "") {
