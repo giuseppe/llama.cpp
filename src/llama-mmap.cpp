@@ -285,7 +285,7 @@ struct llama_mmap::impl {
         }
         if (prefetch) { flags |= MAP_POPULATE; }
 #endif
-        addr = mmap(NULL, file->size(), PROT_READ, flags, fd, 0);
+        addr = mmap(NULL, file->size(), PROT_READ | PROT_WRITE, flags, fd, 0);
         if (addr == MAP_FAILED) {
             throw std::runtime_error(format("mmap failed: %s", strerror(errno)));
         }
